@@ -1,0 +1,10 @@
+{
+  "name": "zachl111/silver-sec-rules-index",
+  "description": "Implement a PHP security tooling project for rules incremental indexing, using append-only fixtures and checkpoint recovery checks.",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Portfolio\\": "src/"
+    }
+  }
+}
