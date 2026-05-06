@@ -1,68 +1,40 @@
 # silver-sec-rules-index
 
-`silver-sec-rules-index` explores security tooling in PHP. The repository keeps the core rule set compact, then surrounds it with examples that show how the decisions move.
+`silver-sec-rules-index` is a PHP project in security tooling. Its focus is to implement a PHP security tooling project for rules incremental indexing, using append-only fixtures and checkpoint recovery checks.
 
-## Silver Sec Rules Index Notes
+## Use Case
 
-The quickest review path is the verifier first, then the fixtures, then the operations note. That order makes it easy to see whether the code, data, and explanation still agree.
+This is intentionally local and self-contained so it can be inspected without credentials, services, or seeded history.
 
-## Implementation Notes
+## Silver Sec Rules Index Review Notes
 
-The project is organized around a compact model rather than a large framework. Inputs are scored, classified, and checked against golden fixtures. The constants live in code and are mirrored in metadata so documentation drift is easy to catch. The PHP implementation uses strict types and a small namespaced policy class.
+For a quick review, compare `policy width` with `trust boundary` before reading the middle cases.
 
-## Why This Exists
+## Highlights
 
-The goal is to capture the core behavior in code and make the surrounding assumptions obvious. A reader should be able to run the verifier, open the fixtures, and understand why each decision was made.
+- `fixtures/domain_review.csv` adds cases for trust boundary and claim drift.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/silver-sec-rules-walkthrough.md` walks through the case spread.
+- The PHP code includes a review path for `policy width` and `trust boundary`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## Feature Notes
+## Code Layout
 
-- Uses fixture data to keep policy checks changes visible in code review.
-- Includes extended examples for replay guards, including `surge` and `degraded`.
-- Documents claim validation tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
+The repository has two validation layers: the original compact policy fixture and the domain review fixture. They are separate so one can change without hiding failures in the other.
 
-## Example Scenarios
+The PHP addition stays small enough to inspect in one sitting.
 
-`recovery` is the first example I would inspect because it lands on the `accept` path with a score of 216. The broader file also keeps `degraded` at 10 and `surge` at 235, which gives the model a useful low-to-high spread.
-
-## Code Tour
-
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Local Setup
-
-Use a normal shell with PHP available on `PATH`. The verifier is written as a PowerShell script because the portfolio was assembled on Windows.
-
-## Try It
+## Run The Check
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Regression Path
 
-## Tests
+That command is also the regression path. It verifies the domain cases and catches mismatches between the CSV, metadata, and code.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
+## Future Work
 
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Boundaries
-
-This code is local-first. It makes no claim about deployed usage and avoids credentials, hosted state, and environment-specific setup.
-
-## Roadmap
-
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Add one more security tooling fixture that focuses on a malformed or borderline input.
+No external service is required. A deeper version would add more negative cases and a clearer boundary around invalid input.
